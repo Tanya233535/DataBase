@@ -11,32 +11,33 @@ public class SimpleBookDatabase {
         String user = "root";
         String password = "postgres";
 
-
-        String createTableSQL = """
-            CREATE TABLE IF NOT EXISTS books (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                title VARCHAR(255) NOT NULL,
-                year INT,
-                author VARCHAR(255) NOT NULL
-            );
-            """;
-
-
-        String insertDataSQL1 = "INSERT INTO books (title, year, author) VALUES ('1984', 1949, 'George Orwell');";
-        String insertDataSQL2 = "INSERT INTO books (title, year, author) VALUES ('To Kill a Mockingbird', 1960, 'Harper Lee');";
-        String insertDataSQL3 = "INSERT INTO books (title, year, author) VALUES ('The Great Gatsby', 1925, 'F. Scott Fitzgerald');";
-
         try (Connection conn = DriverManager.getConnection(url, user, password);
              Statement stmt = conn.createStatement()) {
 
-            stmt.execute(createTableSQL);
-            System.out.println("Таблица 'books' успешно создана!");
+            // Удаление дубликатов из таблицы books
+            String deleteDuplicatesSQL = """
+                DELETE b1
+                FROM books b1
+                INNER JOIN (
+                    SELECT MIN(id) as min_id, title, year, author
+                    FROM books
+                    GROUP BY title, year, author
+                ) b2
+                ON b1.title = b2.title AND b1.year = b2.year AND b1.author = b2.author
+                WHERE b1.id > b2.min_id;
+                """;
+            stmt.execute(deleteDuplicatesSQL);
+            System.out.println("Дубликаты успешно удалены!");
 
-            stmt.execute(insertDataSQL1);
-            stmt.execute(insertDataSQL2);
-            stmt.execute(insertDataSQL3);
-            System.out.println("Данные успешно добавлены!");
+            // Удаление новой книги, если она добавлена с genre_id
+            String deleteNewBookSQL = "DELETE FROM books WHERE title = 'Pride and Prejudice';";
+            stmt.execute(deleteNewBookSQL);
+            System.out.println("Новая книга успешно удалена!");
 
+            // Добавление новой книги без дубликатов
+            String insertNewBookSQL = "INSERT INTO books (title, year, author) VALUES ('Pride and Prejudice', 1813, 'Jane Austen');";
+            stmt.execute(insertNewBookSQL);
+            System.out.println("Новая книга успешно добавлена!");
 
             String selectSQL = "SELECT * FROM books;";
             ResultSet rs = stmt.executeQuery(selectSQL);

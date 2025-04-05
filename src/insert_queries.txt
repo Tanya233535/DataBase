@@ -1,0 +1,2 @@
+INSERT INTO books (title, year, author, genre_id) VALUES ('Pride and Prejudice', 1813, 'Jane Austen', 2);
+INSERT INTO genres (genre) VALUES ('Romance');

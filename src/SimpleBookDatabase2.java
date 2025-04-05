@@ -32,7 +32,6 @@ public class SimpleBookDatabase2 {
             stmt.execute(insertGenresSQL3);
             System.out.println("Данные в таблицу 'genres' успешно добавлены!");
 
-
             String addGenreIdColumnSQL = """
                 ALTER TABLE books
                 ADD COLUMN genre_id INT;
