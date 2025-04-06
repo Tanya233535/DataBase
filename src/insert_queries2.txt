@@ -1,0 +1,1 @@
+INSERT INTO books (title, year, author) VALUES ('Dune', 1965, 'Frank Herbert'), ('The Lord of the Rings', 1954, 'J.R.R. Tolkien');
