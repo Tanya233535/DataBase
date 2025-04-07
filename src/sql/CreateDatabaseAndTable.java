@@ -3,6 +3,7 @@ package sql;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 public class CreateDatabaseAndTable {
@@ -93,10 +94,15 @@ public class CreateDatabaseAndTable {
             statement.executeUpdate(createTableQuery);
 
             System.out.println("База данных и таблица успешно созданы!");
-            
+
             add_all_types(connection);
 
             System.out.println("Все породы успешно добавлены!");
+
+            delete_type(connection, 1);
+            update_type(connection, 2, "Новая порода");
+
+            System.out.println("Тестирование удаления и обновления завершено!");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -127,6 +133,42 @@ public class CreateDatabaseAndTable {
     public static void add_all_types(Connection connection) {
         for (String type : types) {
             insert_type(connection, type);
+        }
+    }
+
+    /**
+     * Функция для удаления типа (породы) кошки из таблицы types.
+     * @param connection Соединение с базой данных.
+     * @param id ID породы кошки для удаления.
+     */
+    public static void delete_type(Connection connection, int id) {
+        String deleteQuery = "DELETE FROM types WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)) {
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+            System.out.println("Порода с id " + id + " успешно удалена.");
+        } catch (SQLException e) {
+            System.err.println("Ошибка при удалении породы с id " + id + ": " + e.getMessage());
+        }
+    }
+
+    /**
+     * Функция для обновления типа (породы) кошки в таблице types.
+     * @param connection Соединение с базой данных.
+     * @param id ID породы кошки для обновления.
+     * @param new_type Новое название породы кошки.
+     */
+    public static void update_type(Connection connection, int id, String new_type) {
+        String updateQuery = "UPDATE types SET type = ? WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+            preparedStatement.setString(1, new_type);
+            preparedStatement.setInt(2, id);
+            preparedStatement.executeUpdate();
+            System.out.println("Порода с id " + id + " успешно обновлена на " + new_type + ".");
+        } catch (SQLException e) {
+            System.err.println("Ошибка при обновлении породы с id " + id + ": " + e.getMessage());
         }
     }
 }
