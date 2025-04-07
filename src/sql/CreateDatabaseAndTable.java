@@ -3,6 +3,7 @@ package sql;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -104,6 +105,13 @@ public class CreateDatabaseAndTable {
 
             System.out.println("Тестирование удаления и обновления завершено!");
 
+            // Тестирование функций получения данных
+            System.out.println("Порода с id 3: " + get_type(connection, 3));
+            System.out.println("Породы, где id < 15:");
+            get_type_where(connection, "id < 15");
+            System.out.println("Все породы:");
+            get_all_types(connection);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -169,6 +177,59 @@ public class CreateDatabaseAndTable {
             System.out.println("Порода с id " + id + " успешно обновлена на " + new_type + ".");
         } catch (SQLException e) {
             System.err.println("Ошибка при обновлении породы с id " + id + ": " + e.getMessage());
+        }
+    }
+
+    /**
+     * Функция для получения типа (породы) кошки по ID.
+     * @param connection Соединение с базой данных.
+     * @param id ID породы кошки.
+     * @return Название породы кошки или null, если порода не найдена.
+     */
+    public static String get_type(Connection connection, int id) {
+        String selectQuery = "SELECT type FROM types WHERE id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getString("type");
+            }
+        } catch (SQLException e) {
+            System.err.println("Ошибка при получении породы с id " + id + ": " + e.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * Функция для вывода на экран всех пород кошек, соответствующих условию WHERE.
+     * @param connection Соединение с базой данных.
+     * @param where Условие WHERE для запроса.
+     */
+    public static void get_type_where(Connection connection, String where) {
+        String selectQuery = "SELECT * FROM types WHERE " + where;
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(selectQuery)) {
+            while (resultSet.next()) {
+                System.out.println("ID: " + resultSet.getInt("id") + ", Type: " + resultSet.getString("type"));
+            }
+        } catch (SQLException e) {
+            System.err.println("Ошибка при получении пород по условию " + where + ": " + e.getMessage());
+        }
+    }
+
+    /**
+     * Функция для вывода на экран всех пород кошек.
+     * @param connection Соединение с базой данных.
+     */
+    public static void get_all_types(Connection connection) {
+        String selectQuery = "SELECT * FROM types";
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(selectQuery)) {
+            while (resultSet.next()) {
+                System.out.println("ID: " + resultSet.getInt("id") + ", Type: " + resultSet.getString("type"));
+            }
+        } catch (SQLException e) {
+            System.err.println("Ошибка при получении всех пород: " + e.getMessage());
         }
     }
 }
