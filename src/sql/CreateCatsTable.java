@@ -15,18 +15,127 @@ public class CreateCatsTable {
     private static final String PASSWORD = "postgres";
     private static final String DATABASE_NAME = "My_cats";
 
-    static String[] names = {"Гарфилд", "Том", "Гудвин", "Рокки", "Ленивец", "Пушок", "Спорти", "Бегемот", "Пират",
-            "Гудини", "Зорро", "Саймон", "Альбус", "Базилио", "Леопольд", "Нарцисс", "Атос", "Каспер", "Валлито",
-            "Оксфорд", "Бисквит", "Соня", "Клеопатра", "Цунами", "Забияка", "Матильда", "Кнопка", "Масяня", "Царапка",
-            "Серсея", "Ворсинка", "Амели", "Наоми", "Маркиза", "Изольда", "Вальс", "Несквик", "Златан", "Баскет",
-            "Изюм", "Цукат", "Мокко", "Месси", "Кокос", "Адидас", "Бейлиз", "Тайгер", "Зефир", "Мохи", "Валенсия",
-            "Баунти", "Свити", "Текила", "Ириска", "Карамель", "Виски", "Кукуруза", "Гренка", "Фасолька", "Льдинка",
-            "Китана", "Офелия", "Дайкири", "Брусника", "Аватар", "Космос", "Призрак", "Изумруд", "Плинтус", "Яндекс",
-            "Крисмас", "Метеор", "Оптимус", "Смайлик", "Цельсий", "Краска", "Дейзи", "Пенка", "Веста", "Астра",
-            "Эйприл", "Среда", "Бусинка", "Гайка", "Елка", "Золушка", "Мята", "Радость", "Сиам", "Оскар", "Феликс",
-            "Гарри", "Байрон", "Чарли", "Симба", "Тао", "Абу", "Ватсон", "Енисей", "Измир", "Кайзер", "Васаби",
-            "Байкал", "Багира", "Айрис", "Диана", "Мими", "Сакура", "Индия", "Тиффани", "Скарлетт", "Пикси", "Лиззи",
-            "Алиса", "Лило", "Ямайка", "Пэрис", "Мальта", "Аляска"};
+    static String[] names = {
+            "Гарфилд",
+            "Том",
+            "Гудвин",
+            "Рокки",
+            "Ленивец",
+            "Пушок",
+            "Спорти",
+            "Бегемот",
+            "Пират",
+            "Гудини",
+            "Зорро",
+            "Саймон",
+            "Альбус",
+            "Базилио",
+            "Леопольд",
+            "Нарцисс",
+            "Атос",
+            "Каспер",
+            "Валлито",
+            "Оксфорд",
+            "Бисквит",
+            "Соня",
+            "Клеопатра",
+            "Цунами",
+            "Забияка",
+            "Матильда",
+            "Кнопка",
+            "Масяня",
+            "Царапка",
+            "Серсея",
+            "Ворсинка",
+            "Амели",
+            "Наоми",
+            "Маркиза",
+            "Изольда",
+            "Вальс",
+            "Несквик",
+            "Златан",
+            "Баскет",
+            "Изюм",
+            "Цукат",
+            "Мокко",
+            "Месси",
+            "Кокос",
+            "Адидас",
+            "Бейлиз",
+            "Тайгер",
+            "Зефир",
+            "Мохи",
+            "Валенсия",
+            "Баунти",
+            "Свити",
+            "Текила",
+            "Ириска",
+            "Карамель",
+            "Виски",
+            "Кукуруза",
+            "Гренка",
+            "Фасолька",
+            "Льдинка",
+            "Китана",
+            "Офелия",
+            "Дайкири",
+            "Брусника",
+            "Аватар",
+            "Космос",
+            "Призрак",
+            "Изумруд",
+            "Плинтус",
+            "Яндекс",
+            "Крисмас",
+            "Метеор",
+            "Оптимус",
+            "Смайлик",
+            "Цельсий",
+            "Краска",
+            "Дейзи",
+            "Пенка",
+            "Веста",
+            "Астра",
+            "Эйприл",
+            "Среда",
+            "Бусинка",
+            "Гайка",
+            "Елка",
+            "Золушка",
+            "Мята",
+            "Радость",
+            "Сиам",
+            "Оскар",
+            "Феликс",
+            "Гарри",
+            "Байрон",
+            "Чарли",
+            "Симба",
+            "Тао",
+            "Абу",
+            "Ватсон",
+            "Енисей",
+            "Измир",
+            "Кайзер",
+            "Васаби",
+            "Байкал",
+            "Багира",
+            "Айрис",
+            "Диана",
+            "Мими",
+            "Сакура",
+            "Индия",
+            "Тиффани",
+            "Скарлетт",
+            "Пикси",
+            "Лиззи",
+            "Алиса",
+            "Лило",
+            "Ямайка",
+            "Пэрис",
+            "Мальта",
+            "Аляска"
+    };
 
     public static void main(String[] args) {
         createCatsTable();
@@ -37,23 +146,28 @@ public class CreateCatsTable {
         insert_cat("Снежок", "Уличный кот", 2, 5.0); // Тип "Уличный кот" отсутствует в таблице types
 
         add_more_cats(5000);
+
+        // Тестирование функций удаления и обновления котиков
+        delete_cat(2); // Удаление котика с id = 2
+        delete_cat("age > 4"); // Удаление котиков старше 4 лет
+        update_cat(1, "name = 'НовоеИмя', age = 4", "id = 1"); // Обновление имени и возраста котика с id = 1
     }
 
     public static void createCatsTable() {
-        String createTableQuery = """
-                CREATE TABLE IF NOT EXISTS cats (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    name VARCHAR(20) NOT NULL,
-                    type_id INT NOT NULL,
-                    age INT NOT NULL,
-                    weight DOUBLE NOT NULL,
-                    FOREIGN KEY (type_id) REFERENCES types(id)
-                )
-                """;
+        String createTableQuery =
+                """
+                          CREATE TABLE IF NOT EXISTS cats (
+                              id INT AUTO_INCREMENT PRIMARY KEY,
+                              name VARCHAR(20) NOT NULL,
+                              type_id INT NOT NULL,
+                              age INT NOT NULL,
+                              weight DOUBLE NOT NULL,
+                              FOREIGN KEY (type_id) REFERENCES types(id)
+                          )
+                          """;
 
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
              Statement statement = connection.createStatement()) {
-
             // Выбор базы данных
             statement.executeUpdate("USE " + DATABASE_NAME);
 
@@ -61,7 +175,6 @@ public class CreateCatsTable {
             statement.executeUpdate(createTableQuery);
 
             System.out.println("Таблица cats успешно создана!");
-
         } catch (SQLException e) {
             System.err.println("Ошибка при создании таблицы cats: " + e.getMessage());
         }
@@ -176,7 +289,6 @@ public class CreateCatsTable {
                 insert_cat(name, type, age, weight);
             }
             System.out.println(n + " случайных кошек успешно добавлены!");
-
         } catch (SQLException e) {
             System.err.println("Ошибка при добавлении случайных кошек: " + e.getMessage());
         }
@@ -197,6 +309,81 @@ public class CreateCatsTable {
                 typesList.add(resultSet.getString("type"));
             }
             return typesList.toArray(new String[0]);
+        }
+    }
+
+    /**
+     * Функция для удаления котика из таблицы cats по id.
+     *
+     * @param id ID котика для удаления.
+     */
+    public static void delete_cat(int id) {
+        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate("USE " + DATABASE_NAME);
+
+            String deleteQuery = "DELETE FROM cats WHERE id = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)) {
+                preparedStatement.setInt(1, id);
+                int rowsAffected = preparedStatement.executeUpdate();
+                if (rowsAffected > 0) {
+                    System.out.println("Котик с id " + id + " успешно удален!");
+                } else {
+                    System.out.println("Котик с id " + id + " не найден!");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Ошибка при удалении котика с id " + id + ": " + e.getMessage());
+        }
+    }
+
+    /**
+     * Функция для удаления котиков из таблицы cats по условию WHERE.
+     *
+     * @param where Условие WHERE для удаления котиков.
+     */
+    public static void delete_cat(String where) {
+        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate("USE " + DATABASE_NAME);
+
+            String deleteQuery = "DELETE FROM cats WHERE " + where;
+            try (Statement preparedStatement = connection.createStatement()) {
+                int rowsAffected = preparedStatement.executeUpdate(deleteQuery);
+                if (rowsAffected > 0) {
+                    System.out.println(rowsAffected + " котиков успешно удалены по условию: " + where);
+                } else {
+                    System.out.println("Котики не найдены по условию: " + where);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Ошибка при удалении котиков по условию " + where + ": " + e.getMessage());
+        }
+    }
+
+    /**
+     * Функция для обновления данных котика в таблице cats.
+     *
+     * @param id    ID котика для обновления.
+     * @param set   Строка со значениями, которые нужно обновить (например, "name = 'Мурзик', age = 3").
+     * @param where Условие WHERE для обновления котика.
+     */
+    public static void update_cat(int id, String set, String where) {
+        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate("USE " + DATABASE_NAME);
+
+            String updateQuery = "UPDATE cats SET " + set + " WHERE " + where;
+            try (Statement preparedStatement = connection.createStatement()) {
+                int rowsAffected = preparedStatement.executeUpdate(updateQuery);
+                if (rowsAffected > 0) {
+                    System.out.println("Данные котика с id " + id + " успешно обновлены!");
+                } else {
+                    System.out.println("Котик с id " + id + " не найден!");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Ошибка при обновлении данных котика с id " + id + ": " + e.getMessage());
         }
     }
 }
