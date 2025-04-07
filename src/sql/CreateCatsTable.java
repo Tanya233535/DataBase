@@ -147,10 +147,12 @@ public class CreateCatsTable {
 
         add_more_cats(5000);
 
-        // Тестирование функций удаления и обновления котиков
-        delete_cat(2); // Удаление котика с id = 2
-        delete_cat("age > 4"); // Удаление котиков старше 4 лет
-        update_cat(1, "name = 'НовоеИмя', age = 4", "id = 1"); // Обновление имени и возраста котика с id = 1
+        // Тестирование функций получения данных
+        System.out.println("Котик с id 1: " + get_cat(1));
+        System.out.println("Котики, где name LIKE '%а':");
+        get_cat_where("name LIKE '%а'");
+        System.out.println("Все котики:");
+        get_all_cats();
     }
 
     public static void createCatsTable() {
@@ -313,77 +315,82 @@ public class CreateCatsTable {
     }
 
     /**
-     * Функция для удаления котика из таблицы cats по id.
+     * Функция для получения котика по id.
      *
-     * @param id ID котика для удаления.
+     * @param id ID котика.
+     * @return Информация о котике или null, если котик не найден.
      */
-    public static void delete_cat(int id) {
+    public static String get_cat(int id) {
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
             Statement statement = connection.createStatement();
             statement.executeUpdate("USE " + DATABASE_NAME);
 
-            String deleteQuery = "DELETE FROM cats WHERE id = ?";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)) {
+            String selectCatQuery = "SELECT c.id, c.name, t.type, c.age, c.weight FROM cats c JOIN types t ON c.type_id = t.id WHERE c.id = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(selectCatQuery)) {
                 preparedStatement.setInt(1, id);
-                int rowsAffected = preparedStatement.executeUpdate();
-                if (rowsAffected > 0) {
-                    System.out.println("Котик с id " + id + " успешно удален!");
-                } else {
-                    System.out.println("Котик с id " + id + " не найден!");
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        return "ID: " + resultSet.getInt("id") +
+                                ", Имя: " + resultSet.getString("name") +
+                                ", Тип: " + resultSet.getString("type") +
+                                ", Возраст: " + resultSet.getInt("age") +
+                                ", Вес: " + resultSet.getDouble("weight");
+                    }
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Ошибка при удалении котика с id " + id + ": " + e.getMessage());
+            System.err.println("Ошибка при получении котика с id " + id + ": " + e.getMessage());
         }
+        return null;
     }
 
     /**
-     * Функция для удаления котиков из таблицы cats по условию WHERE.
+     * Функция для вывода на экран всех котиков, соответствующих условию WHERE.
      *
-     * @param where Условие WHERE для удаления котиков.
+     * @param where Условие WHERE для запроса.
      */
-    public static void delete_cat(String where) {
+    public static void get_cat_where(String where) {
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
             Statement statement = connection.createStatement();
             statement.executeUpdate("USE " + DATABASE_NAME);
 
-            String deleteQuery = "DELETE FROM cats WHERE " + where;
-            try (Statement preparedStatement = connection.createStatement()) {
-                int rowsAffected = preparedStatement.executeUpdate(deleteQuery);
-                if (rowsAffected > 0) {
-                    System.out.println(rowsAffected + " котиков успешно удалены по условию: " + where);
-                } else {
-                    System.out.println("Котики не найдены по условию: " + where);
+            String selectCatQuery = "SELECT c.id, c.name, t.type, c.age, c.weight FROM cats c JOIN types t ON c.type_id = t.id WHERE " + where;
+            try (Statement preparedStatement = connection.createStatement();
+                 ResultSet resultSet = preparedStatement.executeQuery(selectCatQuery)) {
+                while (resultSet.next()) {
+                    System.out.println("ID: " + resultSet.getInt("id") +
+                            ", Имя: " + resultSet.getString("name") +
+                            ", Тип: " + resultSet.getString("type") +
+                            ", Возраст: " + resultSet.getInt("age") +
+                            ", Вес: " + resultSet.getDouble("weight"));
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Ошибка при удалении котиков по условию " + where + ": " + e.getMessage());
+            System.err.println("Ошибка при получении котиков по условию " + where + ": " + e.getMessage());
         }
     }
 
     /**
-     * Функция для обновления данных котика в таблице cats.
-     *
-     * @param id    ID котика для обновления.
-     * @param set   Строка со значениями, которые нужно обновить (например, "name = 'Мурзик', age = 3").
-     * @param where Условие WHERE для обновления котика.
+     * Функция для вывода на экран всех котиков.
      */
-    public static void update_cat(int id, String set, String where) {
+    public static void get_all_cats() {
         try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
             Statement statement = connection.createStatement();
             statement.executeUpdate("USE " + DATABASE_NAME);
 
-            String updateQuery = "UPDATE cats SET " + set + " WHERE " + where;
-            try (Statement preparedStatement = connection.createStatement()) {
-                int rowsAffected = preparedStatement.executeUpdate(updateQuery);
-                if (rowsAffected > 0) {
-                    System.out.println("Данные котика с id " + id + " успешно обновлены!");
-                } else {
-                    System.out.println("Котик с id " + id + " не найден!");
+            String selectCatQuery = "SELECT c.id, c.name, t.type, c.age, c.weight FROM cats c JOIN types t ON c.type_id = t.id";
+            try (Statement preparedStatement = connection.createStatement();
+                 ResultSet resultSet = preparedStatement.executeQuery(selectCatQuery)) {
+                while (resultSet.next()) {
+                    System.out.println("ID: " + resultSet.getInt("id") +
+                            ", Имя: " + resultSet.getString("name") +
+                            ", Тип: " + resultSet.getString("type") +
+                            ", Возраст: " + resultSet.getInt("age") +
+                            ", Вес: " + resultSet.getDouble("weight"));
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Ошибка при обновлении данных котика с id " + id + ": " + e.getMessage());
+            System.err.println("Ошибка при получении всех котиков: " + e.getMessage());
         }
     }
 }
