@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Random;
 
 public class CreateCatsTable {
 
@@ -14,6 +15,19 @@ public class CreateCatsTable {
     private static final String PASSWORD = "postgres";
     private static final String DATABASE_NAME = "My_cats";
 
+    static String[] names = {"Гарфилд", "Том", "Гудвин", "Рокки", "Ленивец", "Пушок", "Спорти", "Бегемот", "Пират",
+            "Гудини", "Зорро", "Саймон", "Альбус", "Базилио", "Леопольд", "Нарцисс", "Атос", "Каспер", "Валлито",
+            "Оксфорд", "Бисквит", "Соня", "Клеопатра", "Цунами", "Забияка", "Матильда", "Кнопка", "Масяня", "Царапка",
+            "Серсея", "Ворсинка", "Амели", "Наоми", "Маркиза", "Изольда", "Вальс", "Несквик", "Златан", "Баскет",
+            "Изюм", "Цукат", "Мокко", "Месси", "Кокос", "Адидас", "Бейлиз", "Тайгер", "Зефир", "Мохи", "Валенсия",
+            "Баунти", "Свити", "Текила", "Ириска", "Карамель", "Виски", "Кукуруза", "Гренка", "Фасолька", "Льдинка",
+            "Китана", "Офелия", "Дайкири", "Брусника", "Аватар", "Космос", "Призрак", "Изумруд", "Плинтус", "Яндекс",
+            "Крисмас", "Метеор", "Оптимус", "Смайлик", "Цельсий", "Краска", "Дейзи", "Пенка", "Веста", "Астра",
+            "Эйприл", "Среда", "Бусинка", "Гайка", "Елка", "Золушка", "Мята", "Радость", "Сиам", "Оскар", "Феликс",
+            "Гарри", "Байрон", "Чарли", "Симба", "Тао", "Абу", "Ватсон", "Енисей", "Измир", "Кайзер", "Васаби",
+            "Байкал", "Багира", "Айрис", "Диана", "Мими", "Сакура", "Индия", "Тиффани", "Скарлетт", "Пикси", "Лиззи",
+            "Алиса", "Лило", "Ямайка", "Пэрис", "Мальта", "Аляска"};
+
     public static void main(String[] args) {
         createCatsTable();
 
@@ -21,6 +35,8 @@ public class CreateCatsTable {
         insert_cat("Барсик", "Абиссинская кошка", 3, 4.5);
         insert_cat("Муська", "Бенгальская кошка", 5, 3.8);
         insert_cat("Снежок", "Уличный кот", 2, 5.0); // Тип "Уличный кот" отсутствует в таблице types
+
+        add_more_cats(5000);
     }
 
     public static void createCatsTable() {
@@ -53,9 +69,10 @@ public class CreateCatsTable {
 
     /**
      * Функция для добавления кошки в таблицу cats.
-     * @param name Имя кошки.
-     * @param type Тип кошки.
-     * @param age Возраст кошки.
+     *
+     * @param name   Имя кошки.
+     * @param type   Тип кошки.
+     * @param age    Возраст кошки.
      * @param weight Вес кошки.
      */
     public static void insert_cat(String name, String type, int age, Double weight) {
@@ -90,8 +107,9 @@ public class CreateCatsTable {
 
     /**
      * Функция для получения id типа кошки по названию.
+     *
      * @param connection Соединение с базой данных.
-     * @param type Название типа кошки.
+     * @param type       Название типа кошки.
      * @return ID типа кошки или -1, если тип не найден.
      */
     private static int getTypeID(Connection connection, String type) throws SQLException {
@@ -111,15 +129,17 @@ public class CreateCatsTable {
 
     /**
      * Функция для добавления нового типа кошки в таблицу types.
+     *
      * @param connection Соединение с базой данных.
-     * @param type Название типа кошки.
+     * @param type       Название типа кошки.
      * @return ID добавленного типа кошки.
      */
     private static int insertType(Connection connection, String type) throws SQLException {
         Statement statement = connection.createStatement();
         statement.executeUpdate("USE " + DATABASE_NAME);
         String insertTypeQuery = "INSERT INTO types (type) VALUES (?)";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(insertTypeQuery, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(insertTypeQuery,
+                Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, type);
             preparedStatement.executeUpdate();
 
@@ -130,6 +150,53 @@ public class CreateCatsTable {
                     throw new SQLException("Не удалось получить ID добавленного типа.");
                 }
             }
+        }
+    }
+
+    /**
+     * Функция для добавления в базу данных n случайных кошек.
+     *
+     * @param n Количество кошек для добавления.
+     */
+    public static void add_more_cats(int n) {
+        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate("USE " + DATABASE_NAME);
+
+            // Получаем все типы кошек из БД
+            String[] catTypes = getAllCatTypes(connection);
+
+            Random random = new Random();
+            for (int i = 0; i < n; i++) {
+                String name = names[random.nextInt(names.length)];
+                String type = catTypes[random.nextInt(catTypes.length)];
+                int age = random.nextInt(15) + 1; // Возраст от 1 до 15 лет
+                double weight = 2.0 + (8.0 * random.nextDouble()); // Вес от 2 до 10 кг
+
+                insert_cat(name, type, age, weight);
+            }
+            System.out.println(n + " случайных кошек успешно добавлены!");
+
+        } catch (SQLException e) {
+            System.err.println("Ошибка при добавлении случайных кошек: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Функция для получения всех типов кошек из таблицы types.
+     *
+     * @param connection Соединение с базой данных.
+     * @return Массив типов кошек.
+     */
+    private static String[] getAllCatTypes(Connection connection) throws SQLException {
+        String selectTypesQuery = "SELECT type FROM types";
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(selectTypesQuery)) {
+            java.util.List<String> typesList = new java.util.ArrayList<>();
+            while (resultSet.next()) {
+                typesList.add(resultSet.getString("type"));
+            }
+            return typesList.toArray(new String[0]);
         }
     }
 }
